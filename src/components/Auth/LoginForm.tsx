@@ -14,7 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Password from "../ui/password";
-
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const form = useForm<FieldValues>({
@@ -27,6 +28,20 @@ export default function LoginForm() {
 
   const onSubmit = async (values: FieldValues) => {
     console.log(values);
+    
+    try {
+      //   const res = await login(values);
+      const res = await signIn("credentials", {
+        ...values,
+        callbackUrl: "/dashboard",
+      });
+      if(res?.ok){
+        toast.success("User Login Successfully.")
+      }
+    } catch (error) {
+      toast.error("User Login Failed")
+      console.error(error);
+    }
 
   };
 

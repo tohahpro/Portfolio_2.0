@@ -1,7 +1,7 @@
 import { DashboardSidebar } from "@/components/shared/Sidebar/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-export default function PublicLayout({
+export default function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

@@ -1,3 +1,4 @@
+"use client"
 import { Home, UserRound, SquareChartGantt, LogOut } from "lucide-react"
 import { MdAddToPhotos } from "react-icons/md";
 import {
@@ -11,6 +12,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button";
+import { signOut, useSession } from "next-auth/react";
+
 
 // Menu items.
 const items = [
@@ -37,6 +40,10 @@ const items = [
 ]
 
 export function DashboardSidebar() {
+
+  const session = useSession()
+
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -58,13 +65,19 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <div className="flex justify-center">
-          <Button
-            variant="destructive"
-            className="w-10/12 gap-2 cursor-pointer"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
+          {
+            session.status === 'authenticated'
+            &&
+            <Button
+              onClick={() => signOut()}
+              variant="destructive"
+              className="w-10/12 gap-2 cursor-pointer"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          }
+
         </div>
       </SidebarContent>
     </Sidebar>
