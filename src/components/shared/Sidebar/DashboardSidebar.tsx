@@ -24,7 +24,7 @@ const items = [
   },
   {
     title: "Profile",
-    url: "/dashboard/profile",
+    url: "/dashboard",
     icon: UserRound,
   },
   {
