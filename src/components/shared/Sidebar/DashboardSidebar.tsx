@@ -24,17 +24,17 @@ const items = [
   },
   {
     title: "Profile",
-    url: "/profile",
+    url: "/dashboard/profile",
     icon: UserRound,
   },
   {
     title: "Create Blog",
-    url: "/create-blog",
+    url: "/dashboard/create-blog",
     icon: SquareChartGantt,
   },
   {
     title: "Add Project",
-    url: "/add-project",
+    url: "/dashboard/add-project",
     icon: MdAddToPhotos,
   },
 ]
