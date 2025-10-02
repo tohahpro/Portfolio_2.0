@@ -50,8 +50,32 @@ export const project = async (data: FieldValues) => {
     console.log(result);
 
     if (result?.id) {
-        revalidateTag('PROJECTS');
+        revalidateTag('PROJECT');
         redirect('/');
     }
     return result;
 }
+
+
+export const updateProject = async (projectId: string, data: FieldValues) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project/${projectId}`, {
+      method: "PATCH", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result?.id) {
+      revalidateTag("PROJECT");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Update failed", error);
+    throw new Error("Failed to update project.");
+  }
+};

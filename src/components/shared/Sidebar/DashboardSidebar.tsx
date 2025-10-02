@@ -37,6 +37,11 @@ const items = [
     url: "/dashboard/add-project",
     icon: MdAddToPhotos,
   },
+  {
+    title: "Projects",
+    url: "/dashboard/projects",
+    icon: MdAddToPhotos,
+  },
 ]
 
 export function DashboardSidebar() {
