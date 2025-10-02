@@ -33,6 +33,11 @@ const items = [
     icon: SquareChartGantt,
   },
   {
+    title: "Blogs",
+    url: "/dashboard/blogs",
+    icon: SquareChartGantt,
+  },
+  {
     title: "Add Project",
     url: "/dashboard/add-project",
     icon: MdAddToPhotos,

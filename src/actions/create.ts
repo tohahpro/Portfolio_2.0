@@ -36,6 +36,39 @@ export const create = async (data: FormData) => {
     return result;
 }
 
+
+export const updateBlog = async (postId: string, data: FieldValues) => {
+ 
+    const session = await getUserSession();
+    const updatedData = {
+      ...data,
+      authorId: session?.user?.id,
+      isFeatured: Boolean(data.isFeatured),
+      tags: data.tags
+        ?.toString()
+        .split(",")
+        .map((tag: string) => tag.trim()) || [],
+    };
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
+      method: "PATCH", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData)
+    });
+
+    if (!res.ok) {
+      throw new Error("Update blog Failed");
+    }
+
+    const result = await res.json();
+    revalidateTag("BLOGS");
+    return result;
+  
+};
+
+
 export const project = async (data: FieldValues) => {
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project`, {
