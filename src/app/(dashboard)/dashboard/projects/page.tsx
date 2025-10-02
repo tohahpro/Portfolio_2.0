@@ -8,9 +8,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Project } from "@/types";
-import { SquarePen, Trash, Link2Icon } from "lucide-react";
+import { SquarePen, Link2Icon } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 import Link from "next/link";
+import { ProjectDelete } from "@/components/modules/Project/ProjectDelete";
 
 
 
@@ -48,7 +49,8 @@ const AllProjects = async () => {
                                     <TableCell className="font-medium cursor-pointer"><Button><a href={project.githubLink}><FaGithub size={28}/></a></Button></TableCell>
                                     <TableCell className="font-medium gap-2 flex justify-end">
                                         <Link href={`/dashboard/projects/${project.id}`}><Button className="cursor-pointer"><SquarePen /></Button></Link>
-                                        <Button className="bg-destructive cursor-pointer"><Trash /></Button>
+                                        {/* <Button className="bg-destructive cursor-pointer"><Trash /></Button> */}
+                                        <ProjectDelete projectId={project.id} />
                                     </TableCell>
                                 </TableRow>
                             ))

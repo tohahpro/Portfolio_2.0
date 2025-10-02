@@ -79,3 +79,28 @@ export const updateProject = async (projectId: string, data: FieldValues) => {
     throw new Error("Failed to update project.");
   }
 };
+
+
+export const deleteProject = async (projectId: string) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project/${projectId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Project delete field");
+    }
+
+    const result = await res.json();    
+    revalidateTag("PROJECT");
+
+    return result; 
+  } catch (error) {
+    console.error("Delete failed", error);
+    throw new Error("Project delete field");
+  }
+};
