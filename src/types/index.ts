@@ -6,6 +6,13 @@ export interface Post {
     isFeatured: boolean
     tags: string[]
     authorId: number
+    views: number
+    author: {
+        email: string
+        name: string
+        id: number
+    }
+    createdAt: string
 }
 
 

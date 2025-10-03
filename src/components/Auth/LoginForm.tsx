@@ -33,7 +33,7 @@ export default function LoginForm() {
       //   const res = await login(values);
       const res = await signIn("credentials", {
         ...values,
-        callbackUrl: "/dashboard",
+        callbackUrl: "/dashboard/profile",
       });
       if(res?.ok){
         toast.success("User Login Successfully.")

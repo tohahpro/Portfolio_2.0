@@ -1,3 +1,4 @@
+'use client'
 import { ModeToggle } from "@/components/ModeToggler"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,36 +12,23 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-
-
-
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-// Navigation links with icons for desktop icon-only navigation
+
 const navigationLinks = [
     { href: "/", label: "Home", role: "PUBLIC" },
     { href: "/about", label: "About", role: "PUBLIC" },
-    { href: "/dashboard", label: "Dashboard", role: "PUBLIC" },
-    // { href: "/admin", label: "Dashboard", role: role.admin },
-    // { href: "/admin", label: "Dashboard", role: role.superAdmin },
-    // { href: "/user", label: "Dashboard", role: role.user },
-    // { href: "/tours", label: "Tours", role: role.user && role.superAdmin && role.admin },
-
+    { href: "/dashboard/profile", label: "Dashboard", role: "PUBLIC" },
 ]
 
-
 export default function Navbar() {
-
-
-
-    // const isActive = (href: string) => {
-    //     return location.pathname === href
-    // }
+    const pathname = usePathname();
 
     return (
         <header className="border-b px-4 md:px-6">
-            <div className="flex h-16 px-4 container mx-auto items-center justify-between gap-4">
+            <div className="flex h-16 md:px-4 lg:px-8 max-w-screen-xl mx-auto items-center justify-between gap-4">
                 {/* Left side */}
                 <div className="flex flex-1 items-center gap-2">
 
@@ -60,21 +48,27 @@ export default function Navbar() {
                     {/* Desktop navigation - icon only */}
                     <NavigationMenu className="hidden md:flex">
                         <NavigationMenuList className="flex items-start gap-0 md:gap-2">
-                            {navigationLinks.map((link, index) => (
-                                <div key={index}>
-                                    <NavigationMenuItem key={index} className="w-full">
+                            {navigationLinks.map((link) => {
+                                const isActive = pathname === link.href;
+
+                                return (
+                                    <NavigationMenuItem key={link.href} className="w-full">
                                         <NavigationMenuLink asChild>
                                             <Link
+                                                href={link.href}
                                                 className={cn(
-                                                    "flex-row items-center gap-2 py-1.5 block w-full px-2",
-                                                    // isActive(link.href) ? "text-sidebar-primary font-medium" : ""
+                                                    "flex items-center gap-2 py-1.5 px-2 rounded transition",
+                                                    isActive
+                                                        ? "font-semibold bg-muted-foreground/30 px-3"
+                                                        : "px-3"
                                                 )}
-                                                href={link.href}>{link.label}
+                                            >
+                                                {link.label}
                                             </Link>
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </NavigationMenuList>
                     </NavigationMenu>
 
@@ -88,16 +82,16 @@ export default function Navbar() {
                                     <UserMenu data={data} handleLogout={handleLogout} />
                                 </>
                             ) : ( */}
-                                <>
-                                    <span className="hidden md:flex">
-                                        <ModeToggle />
-                                    </span>
-                                    {/* <Button asChild
+                        <>
+                            <span className="hidden md:flex">
+                                <ModeToggle />
+                            </span>
+                            {/* <Button asChild
                                         className="text-sm">
                                         <Link href={"/login"}>Login</Link>
                                     </Button> */}
-                                </>
-                            { /* )
+                        </>
+                        { /* )
                         } */}
 
                         <PopoverTrigger asChild>

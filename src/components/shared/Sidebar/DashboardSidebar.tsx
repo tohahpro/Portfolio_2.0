@@ -1,6 +1,6 @@
 "use client"
 import { Home, UserRound, SquareChartGantt, LogOut } from "lucide-react"
-import { MdAddToPhotos } from "react-icons/md";
+import { MdOutlineDashboardCustomize } from "react-icons/md";
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "next-auth/react";
-
+import Link from "next/link";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { BiAddToQueue } from "react-icons/bi";
+import { usePathname } from "next/navigation";
 
 // Menu items.
 const items = [
@@ -24,13 +27,8 @@ const items = [
   },
   {
     title: "Profile",
-    url: "/dashboard",
+    url: "/dashboard/profile",
     icon: UserRound,
-  },
-  {
-    title: "Create Blog",
-    url: "/dashboard/create-blog",
-    icon: SquareChartGantt,
   },
   {
     title: "Blogs",
@@ -38,20 +36,27 @@ const items = [
     icon: SquareChartGantt,
   },
   {
-    title: "Add Project",
-    url: "/dashboard/add-project",
-    icon: MdAddToPhotos,
-  },
-  {
     title: "Projects",
     url: "/dashboard/projects",
-    icon: MdAddToPhotos,
+    icon: MdOutlineDashboardCustomize,
   },
+  {
+    title: "Create Blog",
+    url: "/dashboard/create-blog",
+    icon: HiOutlinePencilSquare,
+  },
+  {
+    title: "Add Project",
+    url: "/dashboard/add-project",
+    icon: BiAddToQueue,
+  },
+
 ]
 
 export function DashboardSidebar() {
 
   const session = useSession()
+  const pathname = usePathname();
 
 
   return (
@@ -61,16 +66,26 @@ export function DashboardSidebar() {
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent className="grow-1">
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        href={item.url}
+                        className={`flex items-center gap-2 px-2 py-1 rounded-md transition-all ${isActive
+                            ? "font-semibold bg-muted-foreground/30"
+                            : ""
+                          }`}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
