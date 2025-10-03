@@ -1,3 +1,4 @@
+import { BlogDelete } from "@/components/modules/Blogs/BlogDelete";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -8,11 +9,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Post } from "@/types";
-import { SquarePen, Trash } from "lucide-react";
+import { SquarePen } from "lucide-react";
 import Link from "next/link";
-
-
-
 
 
 const AllProjects = async () => {
@@ -22,12 +20,8 @@ const AllProjects = async () => {
         }
     });
     const data = await res.json();
-    console.log(data.data);
-    
 
-
-    return (
-        
+    return (        
             <div className="w-full min-h-screen flex items-center">
                 <Table className="w-5/6 mx-auto">
                     <TableHeader>
@@ -46,8 +40,7 @@ const AllProjects = async () => {
                                     
                                     <TableCell className="font-medium gap-2 flex justify-end">
                                         <Link href={`/dashboard/blogs/${blog.id}`}><Button className="cursor-pointer"><SquarePen /></Button></Link>
-                                        <Button className="bg-destructive cursor-pointer"><Trash /></Button>
-                                        
+                                        <BlogDelete blogId={blog.id} />                                        
                                     </TableCell>
                                 </TableRow>
                             ))

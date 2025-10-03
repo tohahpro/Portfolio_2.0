@@ -2,15 +2,30 @@
 
 import { create } from '@/actions/create';
 import Form from 'next/form'
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 
 export default function CreateBlogForm() {
     const [isFeatured, setIsFeatured] = useState("false");
 
+    const router = useRouter()
+    const handleUpdate = async (formData: FormData) => {
+        
+        const res = await create(formData);
+        if (res?.id) {
+            toast.success("Blog created successfully!");
+            router.push("/dashboard/blogs");
+        } else {
+            toast.error("Failed to create blog");
+        }
+
+    };
+
     return (
         <Form
-            action={create}
+            action={handleUpdate}
             className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-4 w-full"
         >
             <h2 className="text-xl font-semibold mb-4">Create Blog</h2>

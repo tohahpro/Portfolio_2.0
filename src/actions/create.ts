@@ -31,7 +31,7 @@ export const create = async (data: FormData) => {
     const result = await res.json();
     if (result?.id) {
         revalidateTag('BLOGS');
-        redirect('/');
+        redirect('/dashboard/blogs');
     }
     return result;
 }
@@ -68,6 +68,24 @@ export const updateBlog = async (postId: string, data: FieldValues) => {
   
 };
 
+export const deleteBlog = async (postId: string) => {
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete blog post");
+    }
+    const result = await res.json();
+
+    revalidateTag("BLOGS");
+    return result;
+
+};
 
 export const project = async (data: FieldValues) => {
 
