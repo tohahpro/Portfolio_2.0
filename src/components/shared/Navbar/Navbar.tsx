@@ -20,6 +20,8 @@ import { usePathname } from "next/navigation"
 const navigationLinks = [
     { href: "/", label: "Home", role: "PUBLIC" },
     { href: "/about", label: "About", role: "PUBLIC" },
+    { href: "/projects", label: "Projects", role: "PUBLIC" },
+    { href: "/blogs", label: "Blogs", role: "PUBLIC" },
     { href: "/dashboard/profile", label: "Dashboard", role: "PUBLIC" },
 ]
 
@@ -27,7 +29,7 @@ export default function Navbar() {
     const pathname = usePathname();
 
     return (
-        <header className="border-b px-4 md:px-6">
+        <header className="border-b bg-background sticky top-0 z-50 px-4 md:px-6">
             <div className="flex h-16 md:px-4 lg:px-8 max-w-screen-xl mx-auto items-center justify-between gap-4">
                 {/* Left side */}
                 <div className="flex flex-1 items-center gap-2">

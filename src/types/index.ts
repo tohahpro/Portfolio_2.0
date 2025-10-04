@@ -23,4 +23,5 @@ export interface Project {
     liveLink: string
     githubLink: string
     thumbnail: string
+    createdAt: string
 }

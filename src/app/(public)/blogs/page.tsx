@@ -9,11 +9,7 @@ const BlogsPage = async () => {
             revalidate: 30
         }
     });
-
     const data = await res.json();
-
-    console.log(data.data);
-
 
     return (
         <div className="min-h-dvh py-20 px-8 w-11/12 mx-auto">
