@@ -1,36 +1,67 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { create } from '@/actions/create';
-import Form from 'next/form'
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-
+import { create } from "@/actions/create";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import EditorBlock from "../TextEditor/EditorBlock";
+import { Button } from "@/components/ui/button";
 
 export default function CreateBlogForm() {
     const [isFeatured, setIsFeatured] = useState("false");
+    const [content, setContent] = useState<any>(null); // Editor.js content
+    const router = useRouter();
 
-    const router = useRouter()
-    const handleUpdate = async (formData: FormData) => {
-        
-        const res = await create(formData);
-        if (res?.id) {
-            toast.success("Blog created successfully!");
-            router.push("/dashboard/blogs");
-        } else {
-            toast.error("Failed to create blog");
+
+    useEffect(() => {
+
+        const raw = localStorage.getItem("editorDataLocal");
+        if (raw) setContent(JSON.parse(raw));
+
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!content) {
+            toast.error("Please write some content!");
+            return;
         }
 
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        formData.set("isFeatured", isFeatured);
+
+        formData.set("content", JSON.stringify(content));
+
+         console.log("Editor.js Content:\n", JSON.stringify(content, null, 2));
+
+  console.log("FormData values:", Object.fromEntries(formData.entries()));
+        try {
+            const res = await create(formData);
+            if (res?.id) {
+                toast.success("Blog created successfully!");
+                
+                localStorage.removeItem("editorDataLocal");
+                router.push("/dashboard/blogs");
+            } else {
+                toast.error("Failed to create blog");
+            }
+        } catch (err) {
+            console.error("Create blog error:", err);
+            toast.error("Something went wrong");
+        }
     };
 
     return (
-        <Form
-            action={handleUpdate}
+        <form
+            onSubmit={handleSubmit}
             className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-4 w-full"
         >
             <h2 className="text-xl font-semibold mb-4">Create Blog</h2>
 
-            {/* Title */}
             <div>
                 <label className="block text-sm font-medium mb-1" htmlFor="title">
                     Title
@@ -39,24 +70,20 @@ export default function CreateBlogForm() {
                     type="text"
                     id="title"
                     name="title"
+                    required
                     className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200"
                 />
             </div>
 
-            {/* Content */}
             <div>
-                <label className="block text-sm font-medium mb-1" htmlFor="content">
-                    Content
-                </label>
-                <textarea
-                    id="content"
-                    name="content"
-                    rows={4}
-                    className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200"
-                />
+                <label className="block text-sm font-medium mb-1">Content</label>
+                <EditorBlock onChange={(data) => {
+                    setContent(data);
+                   
+                    try { localStorage.setItem("editorDataLocal", JSON.stringify(data)); } catch { }
+                }} data={content} />
             </div>
 
-            {/* Thumbnail */}
             <div>
                 <label className="block text-sm font-medium mb-1" htmlFor="thumbnail">
                     Thumbnail URL
@@ -69,7 +96,6 @@ export default function CreateBlogForm() {
                 />
             </div>
 
-            {/* Tags */}
             <div>
                 <label className="block text-sm font-medium mb-1" htmlFor="tags">
                     Tags (comma separated)
@@ -83,7 +109,6 @@ export default function CreateBlogForm() {
                 />
             </div>
 
-            {/* Featured */}
             <div>
                 <p className="block text-sm font-medium mb-1">Featured</p>
                 <div className="flex gap-6">
@@ -112,12 +137,12 @@ export default function CreateBlogForm() {
                 </div>
             </div>
 
-            <button
+            <Button
                 type="submit"
                 className="w-full bg-blue-600 text-white font-medium py-2 rounded-md hover:bg-blue-700 transition"
             >
                 Submit
-            </button>
-        </Form>
+            </Button>
+        </form>
     );
 }

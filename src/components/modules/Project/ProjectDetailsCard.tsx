@@ -1,10 +1,11 @@
 import { Project } from "@/types";
 import Image from "next/image";
+import EditorJSContent from "../Blogs/EditorJSContent";
 
-const ProjectDetailsCard = ({ project }: { project: Project} ) => {
+const ProjectDetailsCard = ({ project }: { project: Project }) => {
 
     console.log(project);
-    
+
 
     if (!project) {
         return (
@@ -16,20 +17,32 @@ const ProjectDetailsCard = ({ project }: { project: Project} ) => {
         <main className="max-w-4xl mx-auto py-20 px-4">
             <h1 className="text-5xl font-bold mb-6">{project?.projectName}</h1>
 
-            {project.thumbnail && (
-                <div className="relative h-[32rem] w-full overflow-hidden">
-                    <Image
-                        src={project.thumbnail}
-                        alt={project.projectName}
-                        fill
-                        className="rounded-lg object-cover shadow-md"
-                    />
-                </div>
-            )}
+            <div>
+                {project.thumbnail && (
+                    <div className="relative h-[32rem] w-full overflow-hidden">
+                        <Image
+                            src={project.thumbnail}
+                            alt={project.projectName}
+                            fill
+                            className="rounded-lg object-cover shadow-md"
+                        />
+                    </div>
+                )}
+            </div>
 
-            <article className="prose pt-7 prose-lg max-w-none">
-                {/* <p>{project.content}</p> */}
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam commodi cum aperiam earum odio quia optio beatae rem laborum labore debitis inventore quasi corrupti tempore, veritatis modi? Atque, minus nulla?</p>
+            <div className="pt-5 flex gap-4">
+                <h3 className="font-medium text-lg py-1">Features -</h3>
+                <div className="flex gap-3">
+                    {
+                        project?.features?.map((feature, idx) => (
+                            <span className="px-4 py-0.5 rounded-sm border" key={idx}>{feature}</span>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <article className="pt-7">                
+                <EditorJSContent data={project.description} className="prose prose-lg max-w-none" />
             </article>
         </main>
     );

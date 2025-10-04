@@ -1,32 +1,53 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { updateBlog } from '@/actions/create';
 import { Post } from '@/types';
 import Form from 'next/form'
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import EditorBlock from '../TextEditor/EditorBlock';
 
 
 export default function UpdateBlogForm({ blog }: { blog: Post }) {
-    const [isFeatured, setIsFeatured] = useState("false");
+    const [isFeatured, setIsFeatured] = useState(blog.isFeatured ? "true" : "false");
+    const [content, setContent] = useState<any>(null); // Editor.js content
+    const router = useRouter();
 
-    const defaultBlog = {
-        title: blog.title,
-        content: blog.content,
-        thumbnail: blog.thumbnail,
-        tags: blog.tags,
-        isFeatured: blog.isFeatured,
-    };
-
-    const router = useRouter()
+    // Parse existing content if it's JSON, otherwise create a simple text block
+    useEffect(() => {
+        try {
+            // Try to parse as JSON first (EditorJS format)
+            const parsedContent = JSON.parse(blog.content);
+            setContent(parsedContent);
+        } catch {
+            // If not JSON, create a simple paragraph block
+            setContent({
+                blocks: [
+                    {
+                        type: "paragraph",
+                        data: {
+                            text: blog.content
+                        }
+                    }
+                ]
+            });
+        }
+    }, [blog.content]);
 
     const handleUpdate = async (formData: FormData) => {
+        if (!content) {
+            toast.error("Please write some content!");
+            return;
+        }
+
         try {
             const values = Object.fromEntries(formData.entries());
             const data = {
                 ...values,
                 isFeatured: isFeatured,
+                content: JSON.stringify(content), // Add EditorJS content
             };
             const res = await updateBlog(String(blog.id), data);
             if (res?.id) {
@@ -57,7 +78,7 @@ export default function UpdateBlogForm({ blog }: { blog: Post }) {
                 </label>
                 <input
                     type="text"
-                    defaultValue={defaultBlog.title}
+                    defaultValue={blog.title}
                     id="title"
                     name="title"
                     className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200"
@@ -66,15 +87,10 @@ export default function UpdateBlogForm({ blog }: { blog: Post }) {
 
             {/* Content */}
             <div>
-                <label className="block text-sm font-medium mb-1" htmlFor="content">
-                    Content
-                </label>
-                <textarea
-                    id="content"
-                    defaultValue={defaultBlog.content}
-                    name="content"
-                    rows={6}
-                    className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200"
+                <label className="block text-sm font-medium mb-1">Content</label>
+                <EditorBlock 
+                    onChange={(data) => setContent(data)} 
+                    data={content} 
                 />
             </div>
 
@@ -85,7 +101,7 @@ export default function UpdateBlogForm({ blog }: { blog: Post }) {
                 </label>
                 <input
                     type="url"
-                    defaultValue={defaultBlog.thumbnail}
+                    defaultValue={blog.thumbnail || ""}
                     id="thumbnail"
                     name="thumbnail"
                     className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200"
@@ -99,7 +115,7 @@ export default function UpdateBlogForm({ blog }: { blog: Post }) {
                 </label>
                 <input
                     type="text"
-                    defaultValue={defaultBlog.tags}
+                    defaultValue={blog.tags.join(", ")}
                     id="tags"
                     name="tags"
                     placeholder="Next.js, React, Web Development"

@@ -22,6 +22,8 @@ export interface Project {
     content: string
     liveLink: string
     githubLink: string
+    features : string[]
+    description: string
     thumbnail: string
     createdAt: string
 }

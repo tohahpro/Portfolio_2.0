@@ -23,6 +23,7 @@ const AllProjects = async () => {
         }
     });
     const data = await res.json();
+    console.log(data);
     const projects = data?.data;
 
 

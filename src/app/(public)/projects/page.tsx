@@ -12,6 +12,7 @@ const ProjectPage = async () => {
         }
     });
     const data = await res.json();
+    console.log(data);
 
     return (
         <div className="min-h-dvh py-20 px-8 w-11/12 mx-auto">

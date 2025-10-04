@@ -6,116 +6,133 @@ import { redirect } from "next/navigation";
 import { FieldValues } from "react-hook-form";
 
 export const create = async (data: FormData) => {
-    const session = await getUserSession();
+  const session = await getUserSession();
 
-    const blogInfo = Object.fromEntries(data.entries());
-    console.log(blogInfo);
-    const modifiedData = {
-        ...blogInfo,
-        authorId: session?.user?.id,
-        isFeatured: Boolean(blogInfo.isFeatured),
-        tags: blogInfo.tags
-            .toString()
-            .split(',')
-            .map(tag => tag.trim())
-    };
-    console.log(modifiedData);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(modifiedData)
-    });
+  const blogInfo = Object.fromEntries(data.entries());
+  const modifiedData = {
+    ...blogInfo,
+    authorId: session?.user?.id,
+    isFeatured: Boolean(blogInfo.isFeatured),
+    tags: blogInfo.tags
+      .toString()
+      .split(',')
+      .map(tag => tag.trim())
+  };
+  console.log(modifiedData);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(modifiedData)
+  });
 
-    const result = await res.json();
-    if (result?.id) {
-        revalidateTag('BLOGS');
-        redirect('/dashboard/blogs');
-    }
-    return result;
-}
+  const result = await res.json();
+  if (result?.id) {
+    revalidateTag('BLOGS');
+    redirect('/dashboard/blogs');
+  }
+  return result;
+};
 
 
 export const updateBlog = async (postId: string, data: FieldValues) => {
- 
-    const session = await getUserSession();
-    const updatedData = {
-      ...data,
-      authorId: session?.user?.id,
-      isFeatured: Boolean(data.isFeatured),
-      tags: data.tags
-        ?.toString()
-        .split(",")
-        .map((tag: string) => tag.trim()) || [],
-    };
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
-      method: "PATCH", 
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedData)
-    });
+  const session = await getUserSession();
+  const updatedData = {
+    ...data,
+    authorId: session?.user?.id,
+    isFeatured: Boolean(data.isFeatured),
+    tags: data.tags
+      ?.toString()
+      .split(",")
+      .map((tag: string) => tag.trim()) || [],
+  };
 
-    if (!res.ok) {
-      throw new Error("Update blog Failed");
-    }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedData)
+  });
 
-    const result = await res.json();
-    revalidateTag("BLOGS");
-    return result;
-  
+  if (!res.ok) {
+    throw new Error("Update blog Failed");
+  }
+
+  const result = await res.json();
+  revalidateTag("BLOGS");
+  return result;
+
 };
 
 export const deleteBlog = async (postId: string) => {
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to delete blog post");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/post/${postId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
     }
-    const result = await res.json();
+  });
 
-    revalidateTag("BLOGS");
-    return result;
+  if (!res.ok) {
+    throw new Error("Failed to delete blog post");
+  }
+  const result = await res.json();
+
+  revalidateTag("BLOGS");
+  return result;
 
 };
 
 export const project = async (data: FieldValues) => {
-
+  try {
+    const modifiedData = {
+      ...data,
+      features: data.features
+        ?.toString()
+        .split(',')
+        .map((feature: string) => feature.trim()) || []
+    };
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(modifiedData)
     });
-
+    if (!res.ok) {
+      throw new Error(`error: ${res.status}`);
+    }
     const result = await res.json();
-    console.log(result);
-
     if (result?.id) {
-        revalidateTag('PROJECT');
-        redirect('/');
+      revalidateTag('PROJECT');
+      redirect('/dashboard/projects');
     }
     return result;
-}
+  } catch (error) {
+    console.error("Project creation error:", error);
+    throw error;
+  }
+};
 
 
 export const updateProject = async (projectId: string, data: FieldValues) => {
   try {
+    const modifiedData = {
+      ...data,
+      features: data.features
+        .toString()
+        .split(',')
+        .map((feature: string) => feature.trim())
+    };
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/project/${projectId}`, {
-      method: "PATCH", 
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(modifiedData)
     });
 
     const result = await res.json();
@@ -123,7 +140,6 @@ export const updateProject = async (projectId: string, data: FieldValues) => {
     if (result?.id) {
       revalidateTag("PROJECT");
     }
-
     return result;
   } catch (error) {
     console.error("Update failed", error);
@@ -146,10 +162,10 @@ export const deleteProject = async (projectId: string) => {
       throw new Error("Project delete field");
     }
 
-    const result = await res.json();    
+    const result = await res.json();
     revalidateTag("PROJECT");
 
-    return result; 
+    return result;
   } catch (error) {
     console.error("Delete failed", error);
     throw new Error("Project delete field");

@@ -1,34 +1,43 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { project } from "@/actions/create";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FieldValues, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import EditorBlock from "../TextEditor/EditorBlock";
+import { useState } from "react";
 
 
 const AddProjectFrom = () => {
-    const form = useForm<FieldValues>()
+    const form = useForm<FieldValues>();
+    const [description, setDescription] = useState<any>(null);
 
     const onSubmit = async (values: FieldValues) => {
-
-        try {
-            const res = await project(values);
-            if (res?.id) {
-                toast.success("User Login Successfully.")
-            }
-        } catch (error) {
-            toast.error("User Login Failed")
-            console.error(error);
+        if (!description) {
+            toast.error("Please write some project description!");
+            return;
         }
-    }
+
+        const projectData = {
+            ...values,
+            description: JSON.stringify(description)
+        };
+        console.log(projectData);
+        const res = await project(projectData);
+        if (res) {
+            toast.success("Project created successfully!");
+        }
+
+    };
 
     return (
         <div className="space-y-6 md:w-4/5 mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -39,7 +48,7 @@ const AddProjectFrom = () => {
                 >
                     <p className="text-center text-2xl font-medium">Add Project</p>
 
-                    {/* Name */}
+                    {/* Project Name */}
                     <FormField
                         control={form.control}
                         name="projectName"
@@ -49,48 +58,76 @@ const AddProjectFrom = () => {
                                 <FormControl>
                                     <Input
                                         type="text"
-                                        placeholder="Enter your email"
+                                        placeholder="Enter project name"
                                         {...field}
                                     />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    {/* Name */}
+                    {/* Features */}
+                    <FormField
+                        control={form.control}
+                        name="features"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Features (comma separated)</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="text"
+                                        placeholder="React, Node.js, MongoDB, etc."
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Project Description */}
+                    <div>
+                        <FormLabel>Project Description</FormLabel>
+                        <EditorBlock
+                            onChange={(data) => setDescription(data)}
+                            data={description}
+                        />
+                    </div>
+                    {/* Thumbnail */}
                     <FormField
                         control={form.control}
                         name="thumbnail"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Photo Url</FormLabel>
+                                <FormLabel>Thumbnail URL</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="url"
-                                        placeholder="Enter your email"
+                                        placeholder="Enter thumbnail URL"
                                         {...field}
                                     />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    {/* Name */}
+
+                    {/* GitHub Link */}
                     <FormField
                         control={form.control}
                         name="githubLink"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Github Link</FormLabel>
+                                <FormLabel>GitHub Link</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="url"
-                                        placeholder="Enter your email"
+                                        placeholder="Enter GitHub repository URL"
                                         {...field}
                                     />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    {/* Name */}
+
+                    {/* Live Link */}
                     <FormField
                         control={form.control}
                         name="liveLink"
@@ -100,7 +137,7 @@ const AddProjectFrom = () => {
                                 <FormControl>
                                     <Input
                                         type="url"
-                                        placeholder="Enter your email"
+                                        placeholder="Enter live demo URL"
                                         {...field}
                                     />
                                 </FormControl>
@@ -114,7 +151,6 @@ const AddProjectFrom = () => {
                 </form>
             </Form>
         </div>
-
     );
 };
 
