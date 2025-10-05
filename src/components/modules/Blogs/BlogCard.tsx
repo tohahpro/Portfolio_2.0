@@ -54,7 +54,7 @@ const BlogCard = ({ blog }: { blog: Post }) => {
                         <p>{getTextPreview(blog.content)}</p>
                     </CardContent>
                     <div className="flex justify-end">
-                        <Link href={`/blogs/${blog.id}`}><Button className="py-0 cursor-pointer">Read More →</Button></Link>
+                        <Link href={`/blogs/${blog.id}`}><Button className="py-0 cursor-pointer text-white">Read More →</Button></Link>
                     </div>
                 </div>
             </Card>

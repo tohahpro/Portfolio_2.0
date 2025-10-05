@@ -1,8 +1,12 @@
 import ProjectCard from "@/components/modules/Project/ProjectCard";
 import { Project } from "@/types";
+import { Metadata } from "next";
 
 
-
+export const metadata: Metadata = {
+  title: "All Projects",
+  description: "Dive into real-world projects demonstrating technology, design, and innovation.",
+};
 const ProjectPage = async () => {
 
 
